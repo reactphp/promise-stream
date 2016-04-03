@@ -1,0 +1,26 @@
+{
+    "name": "clue/promise-stream-react",
+    "description": "The missing link between Promise-land and Stream-land",
+    "keywords": ["unwrap", "stream", "buffer", "promise", "ReactPHP", "async"],
+    "homepage": "https://github.com/clue/php-promise-stream-react",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Lück",
+            "email": "christian@lueck.tv"
+        }
+    ],
+    "autoload": {
+        "files": [ "src/functions.php" ]
+    },
+    "require": {
+        "php": ">=5.3",
+        "react/stream": "^0.4 || ^0.3",
+        "react/promise": "^2.1 || ^1.2"
+    },
+    "require-dev": {
+        "react/event-loop": "^0.4 || ^0.3",
+        "react/promise-timer": "^1.0",
+        "clue/block-react": "^1.0"
+    }
+}
