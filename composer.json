@@ -11,6 +11,7 @@
         }
     ],
     "autoload": {
+        "psr-4": { "Clue\\React\\Promise\\Stream\\" : "src/" },
         "files": [ "src/functions.php" ]
     },
     "require": {

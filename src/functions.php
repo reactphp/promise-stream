@@ -56,55 +56,5 @@ function buffer(ReadableStreamInterface $stream)
  */
 function unwrapReadable(PromiseInterface $promise)
 {
-    $out = new ReadableStream();
-
-    // TODO: support backpressure
-
-    // try to cancel promise once the stream closes
-    if ($promise instanceof CancellablePromiseInterface) {
-        $out->on('close', function() use ($promise) {
-            $promise->cancel();
-        });
-    }
-
-    $promise->then(
-        function ($stream) {
-            if (!($stream instanceof ReadableStreamInterface)) {
-                throw new \InvalidArgumentException('Not a readable stream');
-            }
-            return $stream;
-        }
-    )->then(
-        function (ReadableStreamInterface $stream) use ($out) {
-            if (!$stream->isReadable()) {
-                $out->close();
-                return;
-            }
-
-            // stream any writes into output stream
-            $stream->on('data', function ($data) use ($out) {
-                $out->emit('data', array($data, $out));
-            });
-
-            // error events cancel output stream
-            $stream->on('error', function ($error) use ($out) {
-                $out->emit('error', array($error, $out));
-                $out->close();
-            });
-
-            // close output stream once body closes
-            $stream->on('close', function () use ($out) {
-                $out->close();
-            });
-            $stream->on('end', function () use ($out) {
-                $out->close();
-            });
-        },
-        function ($e) use ($out) {
-            $out->emit('error', array($e, $out));
-            $out->close();
-        }
-    );
-
-    return $out;
+    return new UnwrapReadableStream($promise);
 }
