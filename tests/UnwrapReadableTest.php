@@ -153,4 +153,15 @@ class UnwrapReadableTest extends TestCase
 
         $this->assertFalse($stream->isReadable());
     }
+
+    public function testEmitsCloseOnlyOnceWhenClosingStreamMultipleTimes()
+    {
+        $promise = new Promise\Promise(function () { });
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+
+        $stream->close();
+        $stream->close();
+    }
 }

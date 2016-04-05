@@ -30,13 +30,6 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
 
         // TODO: support backpressure
 
-        // try to cancel promise once the stream closes
-        if ($promise instanceof CancellablePromiseInterface) {
-            $out->on('close', function() use ($promise) {
-                $promise->cancel();
-            });
-        }
-
         $this->promise = $promise->then(
             function ($stream) {
                 if (!($stream instanceof ReadableStreamInterface)) {
@@ -105,6 +98,11 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
         }
 
         $this->closed = true;
+
+        // try to cancel promise once the stream closes
+        if ($this->promise instanceof CancellablePromiseInterface) {
+            $this->promise->cancel();
+        }
 
         $this->emit('end', array($this));
         $this->emit('close', array($this));
