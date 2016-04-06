@@ -28,8 +28,6 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
     {
         $out = $this;
 
-        // TODO: support backpressure
-
         $this->promise = $promise->then(
             function ($stream) {
                 if (!($stream instanceof ReadableStreamInterface)) {
@@ -78,10 +76,16 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
 
     public function pause()
     {
+        $this->promise->then(function (ReadableStreamInterface $stream) {
+            $stream->pause();
+        });
     }
 
     public function resume()
     {
+        $this->promise->then(function (ReadableStreamInterface $stream) {
+            $stream->resume();
+        });
     }
 
     public function pipe(WritableStreamInterface $dest, array $options = array())

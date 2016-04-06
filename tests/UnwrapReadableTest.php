@@ -164,4 +164,26 @@ class UnwrapReadableTest extends TestCase
         $stream->close();
         $stream->close();
     }
+
+    public function testForwardsPauseToInputStream()
+    {
+        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input->expects($this->once())->method('pause');
+
+        $promise = Promise\resolve($input);
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->pause();
+    }
+
+    public function testForwardsResumeToInputStream()
+    {
+        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input->expects($this->once())->method('resume');
+
+        $promise = Promise\resolve($input);
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->resume();
+    }
 }
