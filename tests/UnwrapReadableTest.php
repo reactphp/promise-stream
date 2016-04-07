@@ -6,6 +6,7 @@ use Clue\React\Promise\Stream;
 use React\EventLoop\Factory;
 use React\Promise\Timer;
 use Clue\React\Block;
+use React\Stream\BufferedSink;
 
 class UnwrapReadableTest extends TestCase
 {
@@ -185,5 +186,22 @@ class UnwrapReadableTest extends TestCase
         $stream = Stream\unwrapReadable($promise);
 
         $stream->resume();
+    }
+
+    public function testPipingStreamWillForwardDataEvents()
+    {
+        $input = new ReadableStream();
+
+        $promise = Promise\resolve($input);
+        $stream = Stream\unwrapReadable($promise);
+
+        $output = new BufferedSink();
+        $stream->pipe($output);
+
+        $input->emit('data', array('hello'));
+        $input->emit('data', array('world'));
+        $input->close();
+
+        $output->promise()->then($this->expectCallableOnceWith('helloworld'));
     }
 }
