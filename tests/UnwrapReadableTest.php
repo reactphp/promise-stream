@@ -30,6 +30,9 @@ class UnwrapReadableTest extends TestCase
         $promise = new \React\Promise\Promise(function () { });
         $stream = Stream\unwrapReadable($promise);
 
+        $stream->on('close', $this->expectCallableOnce());
+        $stream->on('end', $this->expectCallableNever());
+
         $stream->close();
 
         $this->assertFalse($stream->isReadable());
@@ -54,6 +57,7 @@ class UnwrapReadableTest extends TestCase
         $this->assertTrue($stream->isReadable());
 
         $stream->on('error', $this->expectCallableOnce());
+        $stream->on('end', $this->expectCallableNever());
 
         $this->loop->run();
 
@@ -69,6 +73,7 @@ class UnwrapReadableTest extends TestCase
         $this->assertTrue($stream->isReadable());
 
         $stream->on('error', $this->expectCallableOnce());
+        $stream->on('end', $this->expectCallableNever());
 
         $this->loop->run();
 
@@ -160,6 +165,7 @@ class UnwrapReadableTest extends TestCase
         $promise = new Promise\Promise(function () { });
         $stream = Stream\unwrapReadable($promise);
 
+        $stream->on('end', $this->expectCallableNever());
         $stream->on('close', $this->expectCallableOnce());
 
         $stream->close();
