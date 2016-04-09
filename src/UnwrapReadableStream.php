@@ -27,6 +27,7 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
     public function __construct(PromiseInterface $promise)
     {
         $out = $this;
+        $closed =& $this->closed;
 
         $this->promise = $promise->then(
             function ($stream) {
@@ -36,9 +37,16 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
                 return $stream;
             }
         )->then(
-            function (ReadableStreamInterface $stream) use ($out) {
+            function (ReadableStreamInterface $stream) use ($out, &$closed) {
+                // stream is already closed, make sure to close output stream
                 if (!$stream->isReadable()) {
                     $out->close();
+                    return $stream;
+                }
+
+                // resolves but output is already closed, make sure to close stream silently
+                if ($closed) {
+                    $stream->close();
                     return $stream;
                 }
 

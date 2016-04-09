@@ -210,4 +210,43 @@ class UnwrapReadableTest extends TestCase
 
         $output->promise()->then($this->expectCallableOnceWith('helloworld'));
     }
+
+    public function testClosingStreamWillCloseStreamIfItIgnoredCancellationAndResolvesLater()
+    {
+        $input = new ReadableStream();
+
+        $loop = $this->loop;
+        $promise = new Promise\Promise(function ($resolve) use ($loop, $input) {
+            $loop->addTimer(0.001, function () use ($resolve, $input) {
+                $resolve($input);
+            });
+        });
+
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+
+        $stream->close();
+
+        Block\await($promise, $this->loop);
+
+        $this->assertFalse($input->isReadable());
+    }
+
+    public function testClosingStreamWillCloseStreamFromCancellationHandler()
+    {
+        $input = new ReadableStream();
+
+        $promise = new \React\Promise\Promise(function () { }, function ($resolve) use ($input) {
+            $resolve($input);
+        });
+
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+
+        $stream->close();
+
+        $this->assertFalse($input->isReadable());
+    }
 }
