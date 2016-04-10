@@ -8,6 +8,7 @@ use React\Promise\PromiseInterface;
 use React\Stream\WritableStreamInterface;
 use React\Stream\Util;
 use React\Promise\CancellablePromiseInterface;
+use InvalidArgumentException;
 
 /**
  * @internal
@@ -19,10 +20,9 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
     private $closed = false;
 
     /**
-     * unwrap a `Promise` which resolves with a `ReadableStreamInterface`.
+     * Instantiate new unwrapped readable stream for given `Promise` which resolves with a `ReadableStreamInterface`.
      *
      * @param PromiseInterface $promise Promise<ReadableStreamInterface, Exception>
-     * @return ReadableStreamInterface
      */
     public function __construct(PromiseInterface $promise)
     {
@@ -32,7 +32,7 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
         $this->promise = $promise->then(
             function ($stream) {
                 if (!($stream instanceof ReadableStreamInterface)) {
-                    throw new \InvalidArgumentException('Not a readable stream');
+                    throw new InvalidArgumentException('Not a readable stream');
                 }
                 return $stream;
             }

@@ -2,11 +2,9 @@
 
 namespace Clue\React\Promise\Stream;
 
-use React\Stream\ReadableStream;
 use React\Stream\ReadableStreamInterface;
 use React\Promise;
 use React\Promise\PromiseInterface;
-use React\Promise\CancellablePromiseInterface;
 
 /**
  * Creates a `Promise` which resolves with the stream data buffer
