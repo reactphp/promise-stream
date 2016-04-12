@@ -1,6 +1,6 @@
 {
     "name": "clue/promise-stream-react",
-    "description": "The missing link between Promise-land and Stream-land",
+    "description": "The missing link between Promise-land and Stream-land for React PHP",
     "keywords": ["unwrap", "stream", "buffer", "promise", "ReactPHP", "async"],
     "homepage": "https://github.com/clue/php-promise-stream-react",
     "license": "MIT",
