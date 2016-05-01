@@ -56,9 +56,11 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
                 });
 
                 // forward end events and close
-                $stream->on('end', function () use ($out) {
-                    $out->emit('end', array($out));
-                    $out->close();
+                $stream->on('end', function () use ($out, &$closed) {
+                    if (!$closed) {
+                        $out->emit('end', array($out));
+                        $out->close();
+                    }
                 });
 
                 // error events cancel output stream
@@ -67,10 +69,9 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
                     $out->close();
                 });
 
-                // close output stream once input closes
-                $stream->on('close', function () use ($out) {
-                    $out->close();
-                });
+                // close both streams once either side closes
+                $stream->on('close', array($out, 'close'));
+                $out->on('close', array($stream, 'close'));
 
                 return $stream;
             },
