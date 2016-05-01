@@ -211,6 +211,18 @@ class UnwrapReadableTest extends TestCase
         $output->promise()->then($this->expectCallableOnceWith('helloworld'));
     }
 
+    public function testClosingStreamWillCloseInputStream()
+    {
+        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input->expects($this->once())->method('isReadable')->willReturn(true);
+        $input->expects($this->once())->method('close');
+
+        $promise = Promise\resolve($input);
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->close();
+    }
+
     public function testClosingStreamWillCloseStreamIfItIgnoredCancellationAndResolvesLater()
     {
         $input = new ReadableStream();
