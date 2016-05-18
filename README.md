@@ -7,6 +7,7 @@ built on top of [React PHP](http://reactphp.org/).
 
 * [Usage](#usage)
   * [buffer()](#buffer)
+  * [first()](#first)
   * [unwrapReadable()](#unwrapreadable)
 * [Install](#install)
 * [License](#license)
@@ -44,6 +45,39 @@ Stream\buffer($stream)->then(function ($contents) {
     var_dump(json_decode($contents));
 });
 ```
+
+The promise will resolve with all data chunks concatenated once the stream closes.
+
+The promise will resolve with an empty string if the stream is already closed.
+
+The promise will reject if the stream emits an error.
+
+The promise will reject if it is canceled.
+
+### first()
+
+The `first(ReadableStreamInterface $stream, $event = 'data')` function can be used to create
+a `Promise` which resolves once the given event triggers for the first time.
+
+```php
+$stream = accessSomeJsonStream();
+
+Stream\first($stream)->then(function ($chunk) {
+    echo 'The first chunk arrived: ' . $chunk;
+});
+```
+
+The promise will resolve with whatever the first event emitted or `null` if the
+event does not pass any data.
+If you do not pass a custom event name, then it will wait for the first "data"
+event and resolve with a string containing the first data chunk.
+
+The promise will reject once the stream closes – unless you're waiting for the
+"close" event, in which case it will resolve.
+
+The promise will reject if the stream is already closed.
+
+The promise will reject if it is canceled.
 
 ### unwrapReadable()
 
