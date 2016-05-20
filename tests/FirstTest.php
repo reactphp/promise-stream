@@ -3,12 +3,23 @@
 use React\Stream\ReadableStream;
 use Clue\React\Promise\Stream;
 use React\Promise\CancellablePromiseInterface;
+use React\Stream\WritableStream;
 
 class FirstTest extends TestCase
 {
-    public function testClosedStreamRejects()
+    public function testClosedReadableStreamRejects()
     {
         $stream = new ReadableStream();
+        $stream->close();
+
+        $promise = Stream\first($stream);
+
+        $this->expectPromiseReject($promise);
+    }
+
+    public function testClosedWritableStreamRejects()
+    {
+        $stream = new WritableStream();
         $stream->close();
 
         $promise = Stream\first($stream);
@@ -28,6 +39,16 @@ class FirstTest extends TestCase
     public function testClosingStreamRejects()
     {
         $stream = new ReadableStream();
+        $promise = Stream\first($stream);
+
+        $stream->close();
+
+        $this->expectPromiseReject($promise);
+    }
+
+    public function testClosingWritableStreamRejects()
+    {
+        $stream = new WritableStream();
         $promise = Stream\first($stream);
 
         $stream->close();

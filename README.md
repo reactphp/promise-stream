@@ -56,8 +56,8 @@ The promise will reject if it is canceled.
 
 ### first()
 
-The `first(ReadableStreamInterface $stream, $event = 'data')` function can be used to create
-a `Promise` which resolves once the given event triggers for the first time.
+The `first(ReadableStreamInterface|WritableStreamInterface $stream, $event = 'data')`
+function can be used to create a `Promise` which resolves once the given event triggers for the first time.
 
 ```php
 $stream = accessSomeJsonStream();

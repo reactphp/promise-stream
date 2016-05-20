@@ -5,6 +5,8 @@ namespace Clue\React\Promise\Stream;
 use React\Stream\ReadableStreamInterface;
 use React\Promise;
 use React\Promise\PromiseInterface;
+use React\Stream\WritableStreamInterface;
+use Evenement\EventEmitterInterface;
 
 /**
  * Creates a `Promise` which resolves with the stream data buffer
@@ -49,15 +51,23 @@ function buffer(ReadableStreamInterface $stream)
 /**
  * Creates a `Promise` which resolves with the first event data
  *
- * @param ReadableStreamInterface $stream
- * @param string $event
+ * @param ReadableStreamInterface|WritableStreamInterface $stream
+ * @param string                                          $event
  * @return CancellablePromiseInterface Promise<mixed, Exception>
  */
-function first(ReadableStreamInterface $stream, $event = 'data')
+function first(EventEmitterInterface $stream, $event = 'data')
 {
-    // stream already ended => reject with error
-    if (!$stream->isReadable()) {
-        return Promise\reject(new \RuntimeException('Stream already closed'));
+    if ($stream instanceof ReadableStreamInterface) {
+        // readable or duplex stream not readable => already closed
+        // a half-open duplex stream is considered closed if its readable side is closed
+        if (!$stream->isReadable()) {
+            return Promise\reject(new \RuntimeException('Stream already closed'));
+        }
+    } elseif ($stream instanceof WritableStreamInterface) {
+        // writable-only stream (not duplex) not writable => already closed
+        if (!$stream->isWritable()) {
+            return Promise\reject(new \RuntimeException('Stream already closed'));
+        }
     }
 
     return new Promise\Promise(function ($resolve, $reject) use ($stream, $event, &$listener) {
