@@ -10,6 +10,7 @@ built on top of [React PHP](http://reactphp.org/).
   * [first()](#first)
   * [all()](#all)
   * [unwrapReadable()](#unwrapreadable)
+  * [unwrapWritable()](#unwrapwritable)
 * [Install](#install)
 * [License](#license)
 
@@ -149,6 +150,50 @@ The given `$promise` SHOULD be pending, i.e. it SHOULD NOT be fulfilled or rejec
 at the time of invoking this function.
 If the given promise is already settled and does not resolve with an
 instance of `ReadableStreamInterface`, then you will not be able to receive
+the `error` event.
+
+### unwrapWritable()
+
+The `unwrapWritable(PromiseInterface $promise)` function can be used to unwrap
+a `Promise` which resolves with a `WritableStreamInterface`.
+
+This function returns a writable stream instance (implementing `WritableStreamInterface`)
+right away which acts as a proxy for the future promise resolution.
+Once the given Promise resolves with a `WritableStreamInterface`, any data you
+wrote to the proxy will be piped to the inner stream.
+
+```php
+//$promise = someFunctionWhichResolvesWithAStream();
+$promise = startUploadStream($uri);
+
+$stream = Stream\unwrapWritable($promise);
+
+$stream->write('hello');
+$stream->end('world');
+
+$stream->on('close', function () {
+   echo 'DONE';
+});
+```
+
+If the given promise is either rejected or fulfilled with anything but an
+instance of `WritableStreamInterface`, then the output stream will emit
+an `error` event and close:
+
+```php
+$promise = startUploadStream($invalidUri);
+
+$stream = Stream\unwrapWritable($promise);
+
+$stream->on('error', function (Exception $error) {
+    echo 'Error: ' . $error->getMessage();
+});
+```
+
+The given `$promise` SHOULD be pending, i.e. it SHOULD NOT be fulfilled or rejected
+at the time of invoking this function.
+If the given promise is already settled and does not resolve with an
+instance of `WritableStreamInterface`, then you will not be able to receive
 the `error` event.
 
 ## Install

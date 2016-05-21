@@ -147,3 +147,14 @@ function unwrapReadable(PromiseInterface $promise)
 {
     return new UnwrapReadableStream($promise);
 }
+
+/**
+ * unwrap a `Promise` which resolves with a `WritableStreamInterface`.
+ *
+ * @param PromiseInterface $promise Promise<WritableStreamInterface, Exception>
+ * @return WritableStreamInterface
+ */
+function unwrapWritable(PromiseInterface $promise)
+{
+    return new UnwrapWritableStream($promise);
+}
