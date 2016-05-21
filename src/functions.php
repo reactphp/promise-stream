@@ -35,7 +35,7 @@ function buffer(ReadableStreamInterface $stream)
         $stream->on('close', function () use ($resolve, &$buffer) {
             $resolve($buffer);
         });
-    }, function ($_, $reject) use ($buffer) {
+    }, function ($_, $reject) {
         $reject(new \RuntimeException('Cancelled buffering'));
     });
 
@@ -84,6 +84,56 @@ function first(EventEmitterInterface $stream, $event = 'data')
     }, function ($_, $reject) use ($stream, $event, &$listener) {
         $stream->removeListener($event, $listener);
         $reject(new \RuntimeException('Operation cancelled'));
+    });
+}
+
+/**
+ * Creates a `Promise` which resolves with an array of all the event data
+ *
+ * @param ReadableStreamInterface|WritableStreamInterface $stream
+ * @param string                                          $event
+ * @return CancellablePromiseInterface Promise<string, Exception>
+ */
+function all(EventEmitterInterface $stream, $event = 'data')
+{
+    // stream already ended => resolve with empty buffer
+    if ($stream instanceof ReadableStreamInterface) {
+        // readable or duplex stream not readable => already closed
+        // a half-open duplex stream is considered closed if its readable side is closed
+        if (!$stream->isReadable()) {
+            return Promise\resolve(array());
+        }
+    } elseif ($stream instanceof WritableStreamInterface) {
+        // writable-only stream (not duplex) not writable => already closed
+        if (!$stream->isWritable()) {
+            return Promise\resolve(array());
+        }
+    }
+
+    $buffer = array();
+    $bufferer = function ($data) use (&$buffer) {
+        $buffer []= $data;
+    };
+    $stream->on($event, $bufferer);
+
+    $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, &$buffer) {
+        $stream->on('error', function ($error) use ($reject) {
+            $reject(new \RuntimeException('An error occured on the underlying stream while buffering', 0, $error));
+        });
+
+        $stream->on('close', function () use ($resolve, &$buffer) {
+            $resolve($buffer);
+        });
+    }, function ($_, $reject) {
+        $reject(new \RuntimeException('Cancelled buffering'));
+    });
+
+    return $promise->then(null, function ($error) use (&$buffer, $bufferer, $stream, $event) {
+        // promise rejected => clear buffer and buffering
+        $buffer = array();
+        $stream->removeListener($event, $bufferer);
+
+        throw $error;
     });
 }
 

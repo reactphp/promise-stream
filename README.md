@@ -8,6 +8,7 @@ built on top of [React PHP](http://reactphp.org/).
 * [Usage](#usage)
   * [buffer()](#buffer)
   * [first()](#first)
+  * [all()](#all)
   * [unwrapReadable()](#unwrapreadable)
 * [Install](#install)
 * [License](#license)
@@ -76,6 +77,32 @@ The promise will reject once the stream closes – unless you're waiting for the
 "close" event, in which case it will resolve.
 
 The promise will reject if the stream is already closed.
+
+The promise will reject if it is canceled.
+
+### all()
+
+The `all(ReadableStreamInterface|WritableStreamInterface $stream, $event = 'data')`
+function can be used to create a `Promise` which resolves with an array of all the event data.
+
+```php
+$stream = accessSomeJsonStream();
+
+Stream\all($stream)->then(function ($chunks) {
+    echo 'The stream consists of ' . count($chunks) . ' chunk(s)';
+});
+```
+
+The promise will resolve with an array of whatever all events emitted or `null` if the
+events do not pass any data.
+If you do not pass a custom event name, then it will wait for all the "data"
+events and resolve with an array containing all the data chunks.
+
+The promise will resolve with an array once the stream closes.
+
+The promise will resolve with an empty array if the stream is already closed.
+
+The promise will reject if the stream emits an error.
 
 The promise will reject if it is canceled.
 
