@@ -1,4 +1,4 @@
-# promise-stream [![Build Status](https://travis-ci.org/clue/php-promise-stream-react.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
+# promise-stream [![Build Status](https://travis-ci.org/reactphp/promise-stream.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
 
 The missing link between Promise-land and Stream-land, 
 built on top of [React PHP](http://reactphp.org/).
@@ -19,12 +19,12 @@ built on top of [React PHP](http://reactphp.org/).
 ## Usage
 
 This lightweight library consists only of a few simple functions.
-All functions reside under the `Clue\React\Promise\Stream` namespace.
+All functions reside under the `React\Promise\Stream` namespace.
 
 The below examples assume you use an import statement similar to this:
 
 ```php
-use Clue\React\Promise\Stream;
+use React\Promise\Stream;
 
 Stream\buffer(…);
 ```
@@ -32,7 +32,7 @@ Stream\buffer(…);
 Alternatively, you can also refer to them with their fully-qualified name:
 
 ```php
-\Clue\React\Promise\Stream\buffer(…);
+\React\Promise\Stream\buffer(…);
 ``` 
 
 ### buffer()
