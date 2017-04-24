@@ -1,8 +1,7 @@
 <?php
 
+use React\Promise\Stream;
 use React\Stream\ReadableStream;
-use Clue\React\Promise\Stream;
-use React\Promise\CancellablePromiseInterface;
 
 class BufferTest extends TestCase
 {

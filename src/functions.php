@@ -1,12 +1,12 @@
 <?php
 
-namespace Clue\React\Promise\Stream;
+namespace React\Promise\Stream;
 
-use React\Stream\ReadableStreamInterface;
+use Evenement\EventEmitterInterface;
 use React\Promise;
 use React\Promise\PromiseInterface;
+use React\Stream\ReadableStreamInterface;
 use React\Stream\WritableStreamInterface;
-use Evenement\EventEmitterInterface;
 
 /**
  * Creates a `Promise` which resolves with the stream data buffer

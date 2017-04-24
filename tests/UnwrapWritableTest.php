@@ -1,12 +1,11 @@
 <?php
 
-use React\Stream\ReadableStream;
-use React\Promise;
-use Clue\React\Promise\Stream;
-use React\EventLoop\Factory;
-use React\Promise\Timer;
 use Clue\React\Block;
-use React\Stream\BufferedSink;
+use React\EventLoop\Factory;
+use React\Promise;
+use React\Promise\Stream;
+use React\Promise\Timer;
+use React\Stream\ReadableStream;
 use React\Stream\WritableStream;
 
 class UnwrapWritableTest extends TestCase

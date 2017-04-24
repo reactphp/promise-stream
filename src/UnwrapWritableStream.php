@@ -1,13 +1,12 @@
 <?php
 
-namespace Clue\React\Promise\Stream;
+namespace React\Promise\Stream;
 
 use Evenement\EventEmitter;
+use InvalidArgumentException;
+use React\Promise\CancellablePromiseInterface;
 use React\Promise\PromiseInterface;
 use React\Stream\WritableStreamInterface;
-use React\Stream\Util;
-use React\Promise\CancellablePromiseInterface;
-use InvalidArgumentException;
 
 /**
  * @internal

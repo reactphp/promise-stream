@@ -1,8 +1,7 @@
 <?php
 
+use React\Promise\Stream;
 use React\Stream\ReadableStream;
-use Clue\React\Promise\Stream;
-use React\Promise\CancellablePromiseInterface;
 use React\Stream\WritableStream;
 
 class AllTest extends TestCase

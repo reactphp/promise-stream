@@ -1,4 +1,4 @@
-# clue/promise-stream-react [![Build Status](https://travis-ci.org/clue/php-promise-stream-react.svg?branch=master)](https://travis-ci.org/clue/php-promise-stream-react)
+# promise-stream [![Build Status](https://travis-ci.org/clue/php-promise-stream-react.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
 
 The missing link between Promise-land and Stream-land, 
 built on top of [React PHP](http://reactphp.org/).
@@ -204,7 +204,7 @@ The recommended way to install this library is [through Composer](https://getcom
 This will install the latest supported version:
 
 ```bash
-$ composer require clue/promise-stream-react:^0.1.2
+$ composer require react/stream-react
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
