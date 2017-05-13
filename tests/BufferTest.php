@@ -1,13 +1,13 @@
 <?php
 
 use React\Promise\Stream;
-use React\Stream\ReadableStream;
+use React\Stream\ThroughStream;
 
 class BufferTest extends TestCase
 {
     public function testClosedStreamResolvesWithEmptyBuffer()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $stream->close();
 
         $promise = Stream\buffer($stream);
@@ -17,7 +17,7 @@ class BufferTest extends TestCase
 
     public function testPendingStreamWillNotResolve()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\buffer($stream);
 
@@ -26,7 +26,7 @@ class BufferTest extends TestCase
 
     public function testClosingStreamResolvesWithEmptyBuffer()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\buffer($stream);
 
         $stream->close();
@@ -36,7 +36,7 @@ class BufferTest extends TestCase
 
     public function testEmittingDataOnStreamResolvesWithConcatenatedData()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\buffer($stream);
 
         $stream->emit('data', array('hello', $stream));
@@ -48,7 +48,7 @@ class BufferTest extends TestCase
 
     public function testEmittingErrorOnStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\buffer($stream);
 
         $stream->emit('error', array(new \RuntimeException('test')));
@@ -58,7 +58,7 @@ class BufferTest extends TestCase
 
     public function testEmittingErrorAfterEmittingDataOnStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\buffer($stream);
 
         $stream->emit('data', array('hello', $stream));
@@ -69,7 +69,7 @@ class BufferTest extends TestCase
 
     public function testCancelPendingStreamWillReject()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\buffer($stream);
 

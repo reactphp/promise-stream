@@ -5,8 +5,7 @@ use React\EventLoop\Factory;
 use React\Promise;
 use React\Promise\Stream;
 use React\Promise\Timer;
-use React\Stream\BufferedSink;
-use React\Stream\ReadableStream;
+use React\Stream\ThroughStream;
 
 class UnwrapReadableTest extends TestCase
 {
@@ -82,7 +81,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testReturnsClosedStreamIfInputStreamIsClosed()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
         $input->close();
 
         $promise = Promise\resolve($input);
@@ -103,7 +102,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testReturnsStreamThatWillBeClosedWhenPromiseResolvesWithClosedInputStream()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
         $input->close();
 
         $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
@@ -123,7 +122,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testEmitsDataWhenInputEmitsData()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapReadable($promise);
@@ -134,7 +133,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testEmitsErrorAndClosesWhenInputEmitsError()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapReadable($promise);
@@ -148,7 +147,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testEmitsEndAndClosesWhenInputEmitsEnd()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapReadable($promise);
@@ -196,19 +195,20 @@ class UnwrapReadableTest extends TestCase
 
     public function testPipingStreamWillForwardDataEvents()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapReadable($promise);
 
-        $output = new BufferedSink();
+        $output = new ThroughStream();
+        $outputPromise = Stream\buffer($output);
         $stream->pipe($output);
 
         $input->emit('data', array('hello'));
         $input->emit('data', array('world'));
-        $input->close();
+        $input->end();
 
-        $output->promise()->then($this->expectCallableOnceWith('helloworld'));
+        $outputPromise->then($this->expectCallableOnceWith('helloworld'));
     }
 
     public function testClosingStreamWillCloseInputStream()
@@ -225,7 +225,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testClosingStreamWillCloseStreamIfItIgnoredCancellationAndResolvesLater()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $loop = $this->loop;
         $promise = new Promise\Promise(function ($resolve) use ($loop, $input) {
@@ -247,7 +247,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testClosingStreamWillCloseStreamFromCancellationHandler()
     {
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $promise = new \React\Promise\Promise(function () { }, function ($resolve) use ($input) {
             $resolve($input);
