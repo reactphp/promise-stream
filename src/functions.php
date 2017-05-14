@@ -12,7 +12,7 @@ use React\Stream\WritableStreamInterface;
  * Creates a `Promise` which resolves with the stream data buffer
  *
  * @param ReadableStreamInterface $stream
- * @return CancellablePromiseInterface Promise<string, Exception>
+ * @return Promise\CancellablePromiseInterface Promise<string, Exception>
  */
 function buffer(ReadableStreamInterface $stream)
 {
@@ -53,7 +53,7 @@ function buffer(ReadableStreamInterface $stream)
  *
  * @param ReadableStreamInterface|WritableStreamInterface $stream
  * @param string                                          $event
- * @return CancellablePromiseInterface Promise<mixed, Exception>
+ * @return Promise\CancellablePromiseInterface Promise<mixed, Exception>
  */
 function first(EventEmitterInterface $stream, $event = 'data')
 {
@@ -71,7 +71,7 @@ function first(EventEmitterInterface $stream, $event = 'data')
     }
 
     return new Promise\Promise(function ($resolve, $reject) use ($stream, $event, &$listener) {
-        $listener = function ($data) use ($stream, $event, &$listener, $resolve) {
+        $listener = function ($data = null) use ($stream, $event, &$listener, $resolve) {
             $stream->removeListener($event, $listener);
             $resolve($data);
         };
@@ -92,7 +92,7 @@ function first(EventEmitterInterface $stream, $event = 'data')
  *
  * @param ReadableStreamInterface|WritableStreamInterface $stream
  * @param string                                          $event
- * @return CancellablePromiseInterface Promise<string, Exception>
+ * @return Promise\CancellablePromiseInterface Promise<string, Exception>
  */
 function all(EventEmitterInterface $stream, $event = 'data')
 {

@@ -5,8 +5,7 @@ use React\EventLoop\Factory;
 use React\Promise;
 use React\Promise\Stream;
 use React\Promise\Timer;
-use React\Stream\ReadableStream;
-use React\Stream\WritableStream;
+use React\Stream\ThroughStream;
 
 class UnwrapWritableTest extends TestCase
 {
@@ -81,7 +80,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testReturnsClosedStreamIfInputStreamIsClosed()
     {
-        $input = new WritableStream();
+        $input = new ThroughStream();
         $input->close();
 
         $promise = Promise\resolve($input);
@@ -102,7 +101,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testReturnsStreamThatWillBeClosedWhenPromiseResolvesWithClosedInputStream()
     {
-        $input = new WritableStream();
+        $input = new ThroughStream();
         $input->close();
 
         $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
@@ -219,7 +218,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testEmitsErrorAndClosesWhenInputEmitsError()
     {
-        $input = new WritableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapWritable($promise);
@@ -233,7 +232,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testEmitsDrainWhenInputEmitsDrain()
     {
-        $input = new WritableStream();
+        $input = new ThroughStream();
 
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapWritable($promise);
@@ -269,7 +268,7 @@ class UnwrapWritableTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        $input = new ReadableStream();
+        $input = new ThroughStream();
 
         $loop = $this->loop;
         $promise = new Promise\Promise(function ($resolve) use ($loop, $input) {
@@ -291,7 +290,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testClosingStreamWillCloseStreamFromCancellationHandler()
     {
-        $input = new WritableStream();
+        $input = new ThroughStream();
 
         $promise = new \React\Promise\Promise(function () { }, function ($resolve) use ($input) {
             $resolve($input);

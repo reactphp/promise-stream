@@ -1,14 +1,13 @@
 <?php
 
 use React\Promise\Stream;
-use React\Stream\ReadableStream;
-use React\Stream\WritableStream;
+use React\Stream\ThroughStream;
 
 class FirstTest extends TestCase
 {
     public function testClosedReadableStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $stream->close();
 
         $promise = Stream\first($stream);
@@ -18,7 +17,7 @@ class FirstTest extends TestCase
 
     public function testClosedWritableStreamRejects()
     {
-        $stream = new WritableStream();
+        $stream = new ThroughStream();
         $stream->close();
 
         $promise = Stream\first($stream);
@@ -28,7 +27,7 @@ class FirstTest extends TestCase
 
     public function testPendingStreamWillNotResolve()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\first($stream);
 
@@ -37,7 +36,7 @@ class FirstTest extends TestCase
 
     public function testClosingStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
         $stream->close();
@@ -47,7 +46,7 @@ class FirstTest extends TestCase
 
     public function testClosingWritableStreamRejects()
     {
-        $stream = new WritableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
         $stream->close();
@@ -57,7 +56,7 @@ class FirstTest extends TestCase
 
     public function testClosingStreamResolvesWhenWaitingForCloseEvent()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream, 'close');
 
         $stream->close();
@@ -67,7 +66,7 @@ class FirstTest extends TestCase
 
     public function testEmittingDataOnStreamResolvesWithFirstEvent()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
         $stream->emit('data', array('hello', $stream));
@@ -79,7 +78,7 @@ class FirstTest extends TestCase
 
     public function testEmittingErrorOnStreamDoesNothing()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
         $stream->emit('error', array(new \RuntimeException('test')));
@@ -89,7 +88,7 @@ class FirstTest extends TestCase
 
     public function testEmittingErrorResolvesWhenWaitingForErrorEvent()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\first($stream, 'error');
 
         $stream->emit('error', array(new \RuntimeException('test')));
@@ -99,7 +98,7 @@ class FirstTest extends TestCase
 
     public function testCancelPendingStreamWillReject()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\first($stream);
 

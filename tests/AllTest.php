@@ -1,14 +1,13 @@
 <?php
 
 use React\Promise\Stream;
-use React\Stream\ReadableStream;
-use React\Stream\WritableStream;
+use React\Stream\ThroughStream;
 
 class AllTest extends TestCase
 {
     public function testClosedStreamResolvesWithEmptyBuffer()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $stream->close();
 
         $promise = Stream\all($stream);
@@ -18,7 +17,7 @@ class AllTest extends TestCase
 
     public function testClosedWritableStreamResolvesWithEmptyBuffer()
     {
-        $stream = new WritableStream();
+        $stream = new ThroughStream();
         $stream->close();
 
         $promise = Stream\all($stream);
@@ -28,7 +27,7 @@ class AllTest extends TestCase
 
     public function testPendingStreamWillNotResolve()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\all($stream);
 
@@ -37,7 +36,7 @@ class AllTest extends TestCase
 
     public function testClosingStreamResolvesWithEmptyBuffer()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
         $stream->close();
@@ -47,7 +46,7 @@ class AllTest extends TestCase
 
     public function testClosingWritableStreamResolvesWithEmptyBuffer()
     {
-        $stream = new WritableStream();
+        $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
         $stream->close();
@@ -57,7 +56,7 @@ class AllTest extends TestCase
 
     public function testEmittingDataOnStreamResolvesWithArrayOfData()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
         $stream->emit('data', array('hello', $stream));
@@ -69,7 +68,7 @@ class AllTest extends TestCase
 
     public function testEmittingErrorOnStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
         $stream->emit('error', array(new \RuntimeException('test')));
@@ -79,7 +78,7 @@ class AllTest extends TestCase
 
     public function testEmittingErrorAfterEmittingDataOnStreamRejects()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
         $stream->emit('data', array('hello', $stream));
@@ -90,7 +89,7 @@ class AllTest extends TestCase
 
     public function testCancelPendingStreamWillReject()
     {
-        $stream = new ReadableStream();
+        $stream = new ThroughStream();
 
         $promise = Stream\all($stream);
 
