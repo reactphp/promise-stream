@@ -1,5 +1,7 @@
 <?php
 
+use Clue\React\Block;
+use React\EventLoop\Factory;
 use React\Promise\Stream;
 use React\Stream\ThroughStream;
 
@@ -76,5 +78,36 @@ class BufferTest extends TestCase
         $promise->cancel();
 
         $this->expectPromiseReject($promise);
+    }
+
+    public function testMaximumSize()
+    {
+        $loop = Factory::create();
+        $stream = new ThroughStream();
+
+        $loop->addTimer(0.1, function () use ($stream) {
+            $stream->write('12345678910111213141516');
+        });
+
+        $promise = Stream\buffer($stream, 16);
+
+        $this->setExpectedException('\OverflowException', 'Buffer exceeded maximum length');
+        Block\await($promise, $loop, 10);
+    }
+
+    public function testUnderMaximumSize()
+    {
+        $loop = Factory::create();
+        $stream = new ThroughStream();
+
+        $loop->addTimer(0.1, function () use ($stream) {
+            $stream->write('1234567891011');
+            $stream->end();
+        });
+
+        $promise = Stream\buffer($stream, 16);
+
+        $result = Block\await($promise, $loop, 10);
+        $this->assertSame('1234567891011', $result);
     }
 }

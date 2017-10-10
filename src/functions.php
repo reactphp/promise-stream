@@ -12,22 +12,29 @@ use React\Stream\WritableStreamInterface;
  * Creates a `Promise` which resolves with the stream data buffer
  *
  * @param ReadableStreamInterface $stream
+ * @param int|null $maxLength Maximum number of bytes to buffer or null for unlimited.
  * @return Promise\CancellablePromiseInterface Promise<string, Exception>
  */
-function buffer(ReadableStreamInterface $stream)
+function buffer(ReadableStreamInterface $stream, $maxLength = null)
 {
     // stream already ended => resolve with empty buffer
     if (!$stream->isReadable()) {
         return Promise\resolve('');
     }
 
+    $deferred = new Promise\Deferred();
     $buffer = '';
-    $bufferer = function ($data) use (&$buffer) {
+    $bufferer = function ($data) use (&$buffer, $deferred, $maxLength) {
         $buffer .= $data;
+        if ($maxLength !== null && isset($buffer[$maxLength])) {
+            $deferred->reject(new \OverflowException('Buffer exceeded maximum length'));
+        }
     };
     $stream->on('data', $bufferer);
 
-    $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, &$buffer) {
+    $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, $deferred, &$buffer) {
+        $deferred->promise()->then($resolve, $reject);
+
         $stream->on('error', function ($error) use ($reject) {
             $reject(new \RuntimeException('An error occured on the underlying stream while buffering', 0, $error));
         });
