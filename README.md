@@ -1,7 +1,9 @@
-# promise-stream [![Build Status](https://travis-ci.org/reactphp/promise-stream.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
+# PromiseStream
+
+[![Build Status](https://travis-ci.org/reactphp/promise-stream.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
 
 The missing link between Promise-land and Stream-land, 
-built on top of [React PHP](http://reactphp.org/).
+built on top of [ReactPHP](https://reactphp.org/).
 
 **Table of Contents**
 
@@ -226,4 +228,4 @@ See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
 
 ## License
 
-MIT
+MIT, see [LICENSE file](LICENSE).
