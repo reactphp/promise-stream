@@ -37,8 +37,11 @@ Alternatively, you can also refer to them with their fully-qualified name:
 
 ### buffer()
 
-The `buffer(ReadableStreamInterface $stream)` function can be used to create
-a `Promise` which resolves with the stream data buffer.
+The `buffer(ReadableStreamInterface $stream, int $maxLength = null)` function can be used to create
+a `Promise` which resolves with the stream data buffer. With an optional maximum length argument 
+which defaults to no limit. In case the maximum length is reached before the end the promise will 
+be rejected with a `\OverflowException`.
+ 
 
 ```php
 $stream = accessSomeJsonStream();
@@ -55,6 +58,18 @@ The promise will resolve with an empty string if the stream is already closed.
 The promise will reject if the stream emits an error.
 
 The promise will reject if it is canceled.
+
+```php
+$stream = accessSomeToLargeStream();
+
+Stream\buffer($stream, 1024)->then(function ($contents) {
+    var_dump(json_decode($contents));
+}, function ($error) {
+    // Reaching here when the stream buffer goes above the max size,
+    // in this example that is 1024 bytes,
+    // or when the stream emits an error. 
+});
+```
 
 ### first()
 
