@@ -22,18 +22,18 @@ function buffer(ReadableStreamInterface $stream, $maxLength = null)
         return Promise\resolve('');
     }
 
-    $deferred = new Promise\Deferred();
     $buffer = '';
-    $bufferer = function ($data) use (&$buffer, $deferred, $maxLength) {
-        $buffer .= $data;
-        if ($maxLength !== null && isset($buffer[$maxLength])) {
-            $deferred->reject(new \OverflowException('Buffer exceeded maximum length'));
-        }
-    };
-    $stream->on('data', $bufferer);
 
-    $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, $deferred, &$buffer) {
-        $deferred->promise()->then($resolve, $reject);
+    $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, $maxLength, &$buffer, &$bufferer) {
+        $bufferer = function ($data) use (&$buffer, $reject, $maxLength) {
+            $buffer .= $data;
+
+            if ($maxLength !== null && isset($buffer[$maxLength])) {
+                $reject(new \OverflowException('Buffer exceeded maximum length'));
+            }
+        };
+
+        $stream->on('data', $bufferer);
 
         $stream->on('error', function ($error) use ($reject) {
             $reject(new \RuntimeException('An error occured on the underlying stream while buffering', 0, $error));
