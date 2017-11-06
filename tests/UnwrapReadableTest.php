@@ -31,8 +31,24 @@ class UnwrapReadableTest extends TestCase
 
         $stream->on('close', $this->expectCallableOnce());
         $stream->on('end', $this->expectCallableNever());
+        $stream->on('error', $this->expectCallableNever());
 
         $stream->close();
+
+        $this->assertFalse($stream->isReadable());
+    }
+
+    public function testClosingRejectingStreamMakesItNotReadable()
+    {
+        $promise = Timer\reject(0.001, $this->loop);
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+        $stream->on('end', $this->expectCallableNever());
+        $stream->on('error', $this->expectCallableNever());
+
+        $stream->close();
+        $this->loop->run();
 
         $this->assertFalse($stream->isReadable());
     }

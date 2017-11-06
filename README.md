@@ -167,6 +167,19 @@ If the given promise is already settled and does not resolve with an
 instance of `ReadableStreamInterface`, then you will not be able to receive
 the `error` event.
 
+You can `close()` the resulting stream at any time, which will either try to
+`cancel()` the pending promise or try to `close()` the underlying stream.
+
+```php
+$promise = startDownloadStream($uri);
+
+$stream = Stream\unwrapReadable($promise);
+
+$loop->addTimer(2.0, function () use ($stream) {
+    $stream->close();
+});
+```
+
 ### unwrapWritable()
 
 The `unwrapWritable(PromiseInterface $promise)` function can be used to unwrap
@@ -210,6 +223,19 @@ at the time of invoking this function.
 If the given promise is already settled and does not resolve with an
 instance of `WritableStreamInterface`, then you will not be able to receive
 the `error` event.
+
+You can `close()` the resulting stream at any time, which will either try to
+`cancel()` the pending promise or try to `close()` the underlying stream.
+
+```php
+$promise = startUploadStream($uri);
+
+$stream = Stream\unwrapWritable($promise);
+
+$loop->addTimer(2.0, function () use ($stream) {
+    $stream->close();
+});
+```
 
 ## Install
 
