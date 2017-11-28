@@ -76,14 +76,14 @@ class FirstTest extends TestCase
         $this->expectPromiseResolveWith('hello', $promise);
     }
 
-    public function testEmittingErrorOnStreamDoesNothing()
+    public function testEmittingErrorOnStreamWillReject()
     {
         $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
         $stream->emit('error', array(new \RuntimeException('test')));
 
-        $promise->then($this->expectCallableNever(), $this->expectCallableNever());
+        $this->expectPromiseReject($promise);
     }
 
     public function testEmittingErrorResolvesWhenWaitingForErrorEvent()

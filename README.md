@@ -89,6 +89,9 @@ event does not pass any data.
 If you do not pass a custom event name, then it will wait for the first "data"
 event and resolve with a string containing the first data chunk.
 
+The promise will reject if the stream emits an error – unless you're waiting for
+the "error" event, in which case it will resolve.
+
 The promise will reject once the stream closes – unless you're waiting for the
 "close" event, in which case it will resolve.
 
