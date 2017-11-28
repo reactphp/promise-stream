@@ -30,8 +30,23 @@ class UnwrapWritableTest extends TestCase
         $stream = Stream\unwrapWritable($promise);
 
         $stream->on('close', $this->expectCallableOnce());
+        $stream->on('error', $this->expectCallableNever());
 
         $stream->close();
+
+        $this->assertFalse($stream->isWritable());
+    }
+
+    public function testClosingRejectingStreamMakesItNotWritable()
+    {
+        $promise = Timer\reject(0.001, $this->loop);
+        $stream = Stream\unwrapWritable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+        $stream->on('error', $this->expectCallableNever());
+
+        $stream->close();
+        $this->loop->run();
 
         $this->assertFalse($stream->isWritable());
     }
@@ -247,6 +262,7 @@ class UnwrapWritableTest extends TestCase
         $stream = Stream\unwrapWritable($promise);
 
         $stream->on('close', $this->expectCallableOnce());
+        $stream->on('error', $this->expectCallableNever());
 
         $stream->close();
         $stream->close();

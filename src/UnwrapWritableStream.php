@@ -88,9 +88,11 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
 
                 return $stream;
             },
-            function ($e) use ($out) {
-                $out->emit('error', array($e, $out));
-                $out->close();
+            function ($e) use ($out, &$closed) {
+                if (!$closed) {
+                    $out->emit('error', array($e, $out));
+                    $out->close();
+                }
             }
         );
     }
