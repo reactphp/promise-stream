@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0 (2017-11-28)
+
+* Feature: Reject `first()` when stream emits an error event
+  (#7 by @clue)
+
+* Fix: Explicit `close()` of unwrapped stream should not emit `error` event
+  (#8 by @clue)
+
+* Internal refactoring to simplify `buffer()` function
+  (#6 by @kelunik)
+
 ## 1.0.0 (2017-10-24)
 
 * First stable release, now following SemVer
