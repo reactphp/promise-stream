@@ -84,6 +84,13 @@ function first(EventEmitterInterface $stream, $event = 'data')
         };
         $stream->on($event, $listener);
 
+        if ($event !== 'error') {
+            $stream->on('error', function ($error) use ($stream, $event, $listener, $reject) {
+                $stream->removeListener($event, $listener);
+                $reject(new \RuntimeException('An error occured on the underlying stream while waiting for event', 0, $error));
+            });
+        }
+
         $stream->on('close', function () use ($stream, $event, $listener, $reject) {
             $stream->removeListener($event, $listener);
             $reject(new \RuntimeException('Stream closed'));
