@@ -2,8 +2,6 @@
 
 namespace React\Tests\Promise\Stream;
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
 class TestCase extends \PHPUnit_Framework_TestCase
 {
     protected function expectCallableOnce()
@@ -83,11 +81,3 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $promise;
     }
 }
-
-class CallableStub
-{
-    public function __invoke()
-    {
-    }
-}
-
