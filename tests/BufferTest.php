@@ -93,7 +93,12 @@ class BufferTest extends TestCase
 
         $promise = Stream\buffer($stream, 16);
 
-        $this->setExpectedException('\OverflowException', 'Buffer exceeded maximum length');
+        if (method_exists($this, 'expectException')) {
+            $this->expectException('OverflowException');
+            $this->expectExceptionMessage('Buffer exceeded maximum length');
+        } else {
+            $this->setExpectedException('\OverflowException', 'Buffer exceeded maximum length');
+        }
         Block\await($promise, $loop, 10);
     }
 

@@ -138,7 +138,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsDataImmediatelyIfPromiseIsAlreadyResolved()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->once())->method('write')->with('hello');
         $input->expects($this->never())->method('end');
@@ -151,7 +151,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsDataInOneGoOncePromiseResolves()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->once())->method('write')->with('helloworld');
         $input->expects($this->never())->method('end');
@@ -169,7 +169,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsDataAndEndImmediatelyIfPromiseIsAlreadyResolved()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->once())->method('write')->with('hello');
         $input->expects($this->once())->method('end')->with('!');
@@ -183,7 +183,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsDataAndEndOncePromiseResolves()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->once())->method('write')->with('helloworld!');
         $input->expects($this->once())->method('end');
@@ -202,7 +202,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsNoDataWhenWritingAfterEndIfPromiseIsAlreadyResolved()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->never())->method('write');
         $input->expects($this->once())->method('end');
@@ -217,7 +217,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testForwardsNoDataWhenWritingAfterEndOncePromiseResolves()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->never())->method('write');
         $input->expects($this->once())->method('end');
@@ -272,7 +272,7 @@ class UnwrapWritableTest extends TestCase
 
     public function testClosingStreamWillCloseInputStream()
     {
-        $input = $this->getMock('React\Stream\WritableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
         $input->expects($this->once())->method('close');
 
