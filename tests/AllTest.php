@@ -1,5 +1,7 @@
 <?php
 
+namespace React\Tests\Promise\Stream;
+
 use React\Promise\Stream;
 use React\Stream\ThroughStream;
 

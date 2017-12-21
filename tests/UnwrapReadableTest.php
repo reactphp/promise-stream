@@ -1,5 +1,7 @@
 <?php
 
+namespace React\Tests\Promise\Stream;
+
 use Clue\React\Block;
 use React\EventLoop\Factory;
 use React\Promise;
