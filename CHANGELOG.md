@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.1 (2017-12-22)
+
+*   Fix: Fix `all()` to assume null values if no event data is passed
+    (#13 by @clue)
+
+*   Improve test suite by simplifying test bootstrapping logic via Composer and
+    add forward compatibility with PHPUnit 5 and PHPUnit 6 and
+    test against PHP 7.1 and 7.2
+    (#11 and #12 by @clue and #9 by @carusogabriel)
+
 ## 1.1.0 (2017-11-28)
 
 * Feature: Reject `first()` when stream emits an error event
