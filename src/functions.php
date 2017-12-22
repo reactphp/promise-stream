@@ -125,7 +125,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
     }
 
     $buffer = array();
-    $bufferer = function ($data) use (&$buffer) {
+    $bufferer = function ($data = null) use (&$buffer) {
         $buffer []= $data;
     };
     $stream->on($event, $bufferer);
