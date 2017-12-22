@@ -1,8 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+namespace React\Tests\Promise\Stream;
 
-class TestCase extends PHPUnit_Framework_TestCase
+class TestCase extends \PHPUnit_Framework_TestCase
 {
     protected function expectCallableOnce()
     {
@@ -51,7 +51,7 @@ class TestCase extends PHPUnit_Framework_TestCase
      */
     protected function createCallableMock()
     {
-        return $this->getMock('CallableStub');
+        return $this->getMock('React\Tests\Promise\Stream\CallableStub');
     }
 
     protected function expectPromiseResolve($promise)
@@ -81,11 +81,3 @@ class TestCase extends PHPUnit_Framework_TestCase
         return $promise;
     }
 }
-
-class CallableStub
-{
-    public function __invoke()
-    {
-    }
-}
-
