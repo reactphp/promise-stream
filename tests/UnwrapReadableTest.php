@@ -191,7 +191,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testForwardsPauseToInputStream()
     {
-        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\ReadableStreamInterface')->getMock();
         $input->expects($this->once())->method('pause');
 
         $promise = Promise\resolve($input);
@@ -202,7 +202,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testForwardsResumeToInputStream()
     {
-        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\ReadableStreamInterface')->getMock();
         $input->expects($this->once())->method('resume');
 
         $promise = Promise\resolve($input);
@@ -231,7 +231,7 @@ class UnwrapReadableTest extends TestCase
 
     public function testClosingStreamWillCloseInputStream()
     {
-        $input = $this->getMock('React\Stream\ReadableStreamInterface');
+        $input = $this->getMockBuilder('React\Stream\ReadableStreamInterface')->getMock();
         $input->expects($this->once())->method('isReadable')->willReturn(true);
         $input->expects($this->once())->method('close');
 

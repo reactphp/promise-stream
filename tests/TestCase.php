@@ -2,7 +2,9 @@
 
 namespace React\Tests\Promise\Stream;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase as BaseTestCase;
+
+class TestCase extends BaseTestCase
 {
     protected function expectCallableOnce()
     {
@@ -51,7 +53,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected function createCallableMock()
     {
-        return $this->getMock('React\Tests\Promise\Stream\CallableStub');
+        return $this->getMockBuilder('React\Tests\Promise\Stream\CallableStub')->getMock();
     }
 
     protected function expectPromiseResolve($promise)
