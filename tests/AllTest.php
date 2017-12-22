@@ -68,6 +68,19 @@ class AllTest extends TestCase
         $this->expectPromiseResolveWith(array('hello', 'world'), $promise);
     }
 
+    public function testEmittingCustomEventOnStreamResolvesWithArrayOfCustomEventData()
+    {
+        $stream = new ThroughStream();
+        $promise = Stream\all($stream, 'a');
+
+        $stream->emit('a', array('hello'));
+        $stream->emit('b', array('ignored'));
+        $stream->emit('a');
+        $stream->close();
+
+        $this->expectPromiseResolveWith(array('hello', null), $promise);
+    }
+
     public function testEmittingErrorOnStreamRejects()
     {
         $stream = new ThroughStream();
