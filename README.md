@@ -33,7 +33,7 @@ Alternatively, you can also refer to them with their fully-qualified name:
 
 ```php
 \React\Promise\Stream\buffer(…);
-``` 
+```
 
 ### buffer()
 
@@ -190,8 +190,9 @@ a `Promise` which resolves with a `WritableStreamInterface`.
 
 This function returns a writable stream instance (implementing `WritableStreamInterface`)
 right away which acts as a proxy for the future promise resolution.
+Any writes to this instance will be buffered in memory for when the promise resolves.
 Once the given Promise resolves with a `WritableStreamInterface`, any data you
-wrote to the proxy will be piped to the inner stream.
+have written to the proxy will be forwarded transparently to the inner stream.
 
 ```php
 //$promise = someFunctionWhichResolvesWithAStream();

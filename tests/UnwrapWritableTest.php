@@ -5,6 +5,7 @@ namespace React\Tests\Promise\Stream;
 use Clue\React\Block;
 use React\EventLoop\Factory;
 use React\Promise;
+use React\Promise\Deferred;
 use React\Promise\Stream;
 use React\Promise\Timer;
 use React\Stream\ThroughStream;
@@ -149,11 +150,30 @@ class UnwrapWritableTest extends TestCase
         $stream->write('hello');
     }
 
-    public function testForwardsDataInOneGoOncePromiseResolves()
+    public function testForwardsOriginalDataOncePromiseResolves()
+    {
+        $data = new \stdClass();
+
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
+        $input->expects($this->once())->method('isWritable')->willReturn(true);
+        $input->expects($this->once())->method('write')->with($data);
+        $input->expects($this->never())->method('end');
+
+        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
+            return $input;
+        });
+        $stream = Stream\unwrapWritable($promise);
+
+        $stream->write($data);
+
+        $this->loop->run();
+    }
+
+    public function testForwardsDataInOriginalChunksOncePromiseResolves()
     {
         $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
-        $input->expects($this->once())->method('write')->with('helloworld');
+        $input->expects($this->exactly(2))->method('write')->withConsecutive(array('hello'), array('world'));
         $input->expects($this->never())->method('end');
 
         $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
@@ -185,7 +205,7 @@ class UnwrapWritableTest extends TestCase
     {
         $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
         $input->expects($this->once())->method('isWritable')->willReturn(true);
-        $input->expects($this->once())->method('write')->with('helloworld!');
+        $input->expects($this->exactly(3))->method('write')->withConsecutive(array('hello'), array('world'), array('!'));
         $input->expects($this->once())->method('end');
 
         $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
@@ -245,6 +265,20 @@ class UnwrapWritableTest extends TestCase
         $input->emit('error', array(new \RuntimeException()));
 
         $this->assertFalse($stream->isWritable());
+    }
+
+    public function testDoesNotEmitDrainWhenStreamBufferExceededAfterForwardingData()
+    {
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
+        $input->expects($this->once())->method('isWritable')->willReturn(true);
+        $input->expects($this->once())->method('write')->with('hello')->willReturn(false);
+
+        $deferred = new Deferred();
+        $stream = Stream\unwrapWritable($deferred->promise());
+        $stream->write('hello');
+
+        $stream->on('drain', $this->expectCallableNever());
+        $deferred->resolve($input);
     }
 
     public function testEmitsDrainWhenInputEmitsDrain()
