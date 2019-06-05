@@ -318,24 +318,20 @@ class UnwrapWritableTest extends TestCase
 
     public function testClosingStreamWillCloseStreamIfItIgnoredCancellationAndResolvesLater()
     {
-        $this->markTestIncomplete();
-
         $input = new ThroughStream();
+        $input->on('close', $this->expectCallableOnce());
 
-        $loop = $this->loop;
-        $promise = new Promise\Promise(function ($resolve) use ($loop, $input) {
-            $loop->addTimer(0.001, function () use ($resolve, $input) {
-                $resolve($input);
-            });
-        });
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapReadable($promise);
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $stream->on('close', $this->expectCallableOnce());
 
         $stream->close();
 
-        Block\await($promise, $this->loop);
+        $this->assertTrue($input->isReadable());
+
+        $deferred->resolve($input);
 
         $this->assertFalse($input->isReadable());
     }
