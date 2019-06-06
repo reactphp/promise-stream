@@ -200,6 +200,30 @@ class UnwrapReadableTest extends TestCase
         $stream->pause();
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testPauseAfterCloseHasNoEffect()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->close();
+        $stream->pause();
+    }
+
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testPauseAfterErrorDueToInvalidInputHasNoEffect()
+    {
+        $promise = \React\Promise\reject(new \RuntimeException());
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->pause();
+    }
+
     public function testForwardsResumeToInputStream()
     {
         $input = $this->getMockBuilder('React\Stream\ReadableStreamInterface')->getMock();
@@ -208,6 +232,18 @@ class UnwrapReadableTest extends TestCase
         $promise = Promise\resolve($input);
         $stream = Stream\unwrapReadable($promise);
 
+        $stream->resume();
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testResumeAfterCloseHasNoEffect()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->close();
         $stream->resume();
     }
 
@@ -278,5 +314,32 @@ class UnwrapReadableTest extends TestCase
         $stream->close();
 
         $this->assertFalse($input->isReadable());
+    }
+
+    public function testCloseShouldRemoveAllListenersAfterCloseEvent()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+        $this->assertCount(1, $stream->listeners('close'));
+
+        $stream->close();
+
+        $this->assertCount(0, $stream->listeners('close'));
+    }
+
+    public function testCloseShouldRemoveReferenceToPromiseToAvoidGarbageReferences()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapReadable($promise);
+
+        $stream->close();
+
+        $ref = new \ReflectionProperty($stream, 'promise');
+        $ref->setAccessible(true);
+        $value = $ref->getValue($stream);
+
+        $this->assertNull($value);
     }
 }

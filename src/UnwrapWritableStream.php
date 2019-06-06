@@ -35,7 +35,7 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
 
         $this->promise = $promise->then(
             function ($stream) {
-                if (!($stream instanceof WritableStreamInterface)) {
+                if (!$stream instanceof WritableStreamInterface) {
                     throw new InvalidArgumentException('Not a writable stream');
                 }
                 return $stream;
@@ -156,7 +156,9 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
         if ($this->promise instanceof CancellablePromiseInterface) {
             $this->promise->cancel();
         }
+        $this->promise = $this->stream = null;
 
-        $this->emit('close', array($this));
+        $this->emit('close');
+        $this->removeAllListeners();
     }
 }
