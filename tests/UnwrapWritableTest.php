@@ -253,6 +253,55 @@ class UnwrapWritableTest extends TestCase
         $this->loop->run();
     }
 
+    public function testWriteReturnsFalseWhenPromiseIsPending()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapWritable($promise);
+
+        $ret = $stream->write('nope');
+
+        $this->assertFalse($ret);
+    }
+
+    public function testWriteReturnsTrueWhenUnwrappedStreamReturnsTrueForWrite()
+    {
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
+        $input->expects($this->once())->method('isWritable')->willReturn(true);
+        $input->expects($this->once())->method('write')->willReturn(true);
+
+        $promise = \React\Promise\resolve($input);
+        $stream = Stream\unwrapWritable($promise);
+
+        $ret = $stream->write('hello');
+
+        $this->assertTrue($ret);
+    }
+
+    public function testWriteReturnsFalseWhenUnwrappedStreamReturnsFalseForWrite()
+    {
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
+        $input->expects($this->once())->method('isWritable')->willReturn(true);
+        $input->expects($this->once())->method('write')->willReturn(false);
+
+        $promise = \React\Promise\resolve($input);
+        $stream = Stream\unwrapWritable($promise);
+
+        $ret = $stream->write('nope');
+
+        $this->assertFalse($ret);
+    }
+
+    public function testWriteAfterCloseReturnsFalse()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapWritable($promise);
+
+        $stream->close();
+        $ret = $stream->write('nope');
+
+        $this->assertFalse($ret);
+    }
+
     public function testEmitsErrorAndClosesWhenInputEmitsError()
     {
         $input = new ThroughStream();
@@ -265,6 +314,20 @@ class UnwrapWritableTest extends TestCase
         $input->emit('error', array(new \RuntimeException()));
 
         $this->assertFalse($stream->isWritable());
+    }
+
+    public function testEmitsDrainWhenPromiseResolvesWithStreamWhenForwardingData()
+    {
+        $input = $this->getMockBuilder('React\Stream\WritableStreamInterface')->getMock();
+        $input->expects($this->once())->method('isWritable')->willReturn(true);
+        $input->expects($this->once())->method('write')->with('hello')->willReturn(true);
+
+        $deferred = new Deferred();
+        $stream = Stream\unwrapWritable($deferred->promise());
+        $stream->write('hello');
+
+        $stream->on('drain', $this->expectCallableOnce());
+        $deferred->resolve($input);
     }
 
     public function testDoesNotEmitDrainWhenStreamBufferExceededAfterForwardingData()

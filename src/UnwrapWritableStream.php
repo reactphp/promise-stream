@@ -105,7 +105,7 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
     public function write($data)
     {
         if ($this->ending) {
-            return;
+            return false;
         }
 
         // forward to inner stream if possible
