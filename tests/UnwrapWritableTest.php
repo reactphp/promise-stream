@@ -352,4 +352,37 @@ class UnwrapWritableTest extends TestCase
 
         $this->assertFalse($input->isWritable());
     }
+
+    public function testCloseShouldRemoveAllListenersAfterCloseEvent()
+    {
+        $promise = new \React\Promise\Promise(function () { });
+        $stream = Stream\unwrapWritable($promise);
+
+        $stream->on('close', $this->expectCallableOnce());
+        $this->assertCount(1, $stream->listeners('close'));
+
+        $stream->close();
+
+        $this->assertCount(0, $stream->listeners('close'));
+    }
+
+    public function testCloseShouldRemoveReferenceToPromiseAndStreamToAvoidGarbageReferences()
+    {
+        $promise = \React\Promise\resolve(new ThroughStream());
+        $stream = Stream\unwrapWritable($promise);
+
+        $stream->close();
+
+        $ref = new \ReflectionProperty($stream, 'promise');
+        $ref->setAccessible(true);
+        $value = $ref->getValue($stream);
+
+        $this->assertNull($value);
+
+        $ref = new \ReflectionProperty($stream, 'stream');
+        $ref->setAccessible(true);
+        $value = $ref->getValue($stream);
+
+        $this->assertNull($value);
+    }
 }
