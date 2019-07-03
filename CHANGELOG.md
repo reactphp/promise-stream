@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.0 (2019-07-03)
+
+*   Feature: Support unwrapping object streams by buffering original write chunks in array.
+    (#15 by @clue)
+
+*   Feature: Clean up unneeded references for unwrapped streams when closing.
+    (#18 by @clue)
+
+*   Fix: Writing to closed unwrapped stream should return false (backpressure).
+    (#17 by @clue)
+
+*   Improve test suite to support PHPUnit 7, PHP 7.3 and fix incomplete test
+    and improve API documentation.
+    (#16 and #19 by @clue)
+
 ## 1.1.1 (2017-12-22)
 
 *   Fix: Fix `all()` to assume null values if no event data is passed
