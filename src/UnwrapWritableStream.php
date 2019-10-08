@@ -4,7 +4,6 @@ namespace React\Promise\Stream;
 
 use Evenement\EventEmitter;
 use InvalidArgumentException;
-use React\Promise\CancellablePromiseInterface;
 use React\Promise\PromiseInterface;
 use React\Stream\WritableStreamInterface;
 
@@ -153,7 +152,7 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
         $this->closed = true;
 
         // try to cancel promise once the stream closes
-        if ($this->promise instanceof CancellablePromiseInterface) {
+        if ($this->promise !== null && \method_exists($this->promise, 'cancel')) {
             $this->promise->cancel();
         }
         $this->promise = $this->stream = null;
