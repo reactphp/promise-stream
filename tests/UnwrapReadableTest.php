@@ -13,7 +13,10 @@ class UnwrapReadableTest extends TestCase
 {
     private $loop;
 
-    public function setUp()
+    /**
+     * @before
+     */
+    public function setUpLoop()
     {
         $this->loop = Factory::create();
     }
