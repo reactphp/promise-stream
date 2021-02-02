@@ -1,6 +1,6 @@
 # PromiseStream
 
-[![Build Status](https://travis-ci.org/reactphp/promise-stream.svg?branch=master)](https://travis-ci.org/reactphp/promise-stream)
+[![CI status](https://github.com/reactphp/promise-stream/workflows/CI/badge.svg)](https://github.com/reactphp/promise-stream/actions)
 
 The missing link between Promise-land and Stream-land
 for [ReactPHP](https://reactphp.org/).
