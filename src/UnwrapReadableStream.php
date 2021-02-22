@@ -126,7 +126,7 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
         $this->closed = true;
 
         // try to cancel promise once the stream closes
-        if ($this->promise instanceof CancellablePromiseInterface) {
+        if ($this->promise instanceof CancellablePromiseInterface  || (method_exists($this->promise, 'cancel') && $this->promise instanceof PromiseInterface)) {
             $this->promise->cancel();
         }
         $this->promise = null;

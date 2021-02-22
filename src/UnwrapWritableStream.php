@@ -153,7 +153,7 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
         $this->closed = true;
 
         // try to cancel promise once the stream closes
-        if ($this->promise instanceof CancellablePromiseInterface) {
+        if ($this->promise instanceof CancellablePromiseInterface  || (method_exists($this->promise, 'cancel') && $this->promise instanceof PromiseInterface)) {
             $this->promise->cancel();
         }
         $this->promise = $this->stream = null;
