@@ -86,9 +86,13 @@ class AllTest extends TestCase
         $stream = new ThroughStream();
         $promise = Stream\all($stream);
 
-        $stream->emit('error', array(new \RuntimeException('test')));
+        $stream->emit('error', array(new \RuntimeException('test', 42)));
 
-        $this->expectPromiseReject($promise);
+        $promise->then(null, $this->expectCallableOnceWith(new \RuntimeException(
+            'An error occured on the underlying stream while buffering: test',
+            42,
+            new \RuntimeException('test', 42)
+        )));
     }
 
     public function testEmittingErrorAfterEmittingDataOnStreamRejects()
@@ -97,9 +101,13 @@ class AllTest extends TestCase
         $promise = Stream\all($stream);
 
         $stream->emit('data', array('hello', $stream));
-        $stream->emit('error', array(new \RuntimeException('test')));
+        $stream->emit('error', array(new \RuntimeException('test', 42)));
 
-        $this->expectPromiseReject($promise);
+        $promise->then(null, $this->expectCallableOnceWith(new \RuntimeException(
+            'An error occured on the underlying stream while buffering: test',
+            42,
+            new \RuntimeException('test', 42)
+        )));
     }
 
     public function testCancelPendingStreamWillReject()

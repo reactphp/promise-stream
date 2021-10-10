@@ -83,9 +83,13 @@ class FirstTest extends TestCase
         $stream = new ThroughStream();
         $promise = Stream\first($stream);
 
-        $stream->emit('error', array(new \RuntimeException('test')));
+        $stream->emit('error', array(new \RuntimeException('test', 42)));
 
-        $this->expectPromiseReject($promise);
+        $promise->then(null, $this->expectCallableOnceWith(new \RuntimeException(
+            'An error occured on the underlying stream while waiting for event: test',
+            42,
+            new \RuntimeException('test', 42)
+        )));
     }
 
     public function testEmittingErrorResolvesWhenWaitingForErrorEvent()

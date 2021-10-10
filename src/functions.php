@@ -67,8 +67,12 @@ function buffer(ReadableStreamInterface $stream, $maxLength = null)
 
         $stream->on('data', $bufferer);
 
-        $stream->on('error', function ($error) use ($reject) {
-            $reject(new \RuntimeException('An error occured on the underlying stream while buffering', 0, $error));
+        $stream->on('error', function (\Exception $e) use ($reject) {
+            $reject(new \RuntimeException(
+                'An error occured on the underlying stream while buffering: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            ));
         });
 
         $stream->on('close', function () use ($resolve, &$buffer) {
@@ -78,7 +82,7 @@ function buffer(ReadableStreamInterface $stream, $maxLength = null)
         $reject(new \RuntimeException('Cancelled buffering'));
     });
 
-    return $promise->then(null, function ($error) use (&$buffer, $bufferer, $stream) {
+    return $promise->then(null, function (\Exception $error) use (&$buffer, $bufferer, $stream) {
         // promise rejected => clear buffer and buffering
         $buffer = '';
         $stream->removeListener('data', $bufferer);
@@ -140,9 +144,13 @@ function first(EventEmitterInterface $stream, $event = 'data')
         $stream->on($event, $listener);
 
         if ($event !== 'error') {
-            $stream->on('error', function ($error) use ($stream, $event, $listener, $reject) {
+            $stream->on('error', function (\Exception $e) use ($stream, $event, $listener, $reject) {
                 $stream->removeListener($event, $listener);
-                $reject(new \RuntimeException('An error occured on the underlying stream while waiting for event', 0, $error));
+                $reject(new \RuntimeException(
+                    'An error occured on the underlying stream while waiting for event: ' . $e->getMessage(),
+                    $e->getCode(),
+                    $e
+                ));
             });
         }
 
@@ -207,8 +215,12 @@ function all(EventEmitterInterface $stream, $event = 'data')
     $stream->on($event, $bufferer);
 
     $promise = new Promise\Promise(function ($resolve, $reject) use ($stream, &$buffer) {
-        $stream->on('error', function ($error) use ($reject) {
-            $reject(new \RuntimeException('An error occured on the underlying stream while buffering', 0, $error));
+        $stream->on('error', function (\Exception $e) use ($reject) {
+            $reject(new \RuntimeException(
+                'An error occured on the underlying stream while buffering: ' . $e->getMessage(),
+                $e->getCode(),
+                $e
+            ));
         });
 
         $stream->on('close', function () use ($resolve, &$buffer) {
