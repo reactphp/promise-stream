@@ -14,7 +14,7 @@ use React\Stream\WritableStreamInterface;
  * ```php
  * $stream = accessSomeJsonStream();
  *
- * Stream\buffer($stream)->then(function ($contents) {
+ * React\Promise\Stream\buffer($stream)->then(function ($contents) {
  *     var_dump(json_decode($contents));
  * });
  * ```
@@ -34,7 +34,7 @@ use React\Stream\WritableStreamInterface;
  * ```php
  * $stream = accessSomeToLargeStream();
  *
- * Stream\buffer($stream, 1024)->then(function ($contents) {
+ * React\Promise\Stream\buffer($stream, 1024)->then(function ($contents) {
  *     var_dump(json_decode($contents));
  * }, function ($error) {
  *     // Reaching here when the stream buffer goes above the max size,
@@ -97,7 +97,7 @@ function buffer(ReadableStreamInterface $stream, $maxLength = null)
  * ```php
  * $stream = accessSomeJsonStream();
  *
- * Stream\first($stream)->then(function ($chunk) {
+ * React\Promise\Stream\first($stream)->then(function ($chunk) {
  *     echo 'The first chunk arrived: ' . $chunk;
  * });
  * ```
@@ -170,7 +170,7 @@ function first(EventEmitterInterface $stream, $event = 'data')
  * ```php
  * $stream = accessSomeJsonStream();
  *
- * Stream\all($stream)->then(function ($chunks) {
+ * React\Promise\Stream\all($stream)->then(function ($chunks) {
  *     echo 'The stream consists of ' . count($chunks) . ' chunk(s)';
  * });
  * ```
@@ -251,7 +251,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
  * //$promise = someFunctionWhichResolvesWithAStream();
  * $promise = startDownloadStream($uri);
  *
- * $stream = Stream\unwrapReadable($promise);
+ * $stream = React\Promise\Stream\unwrapReadable($promise);
  *
  * $stream->on('data', function ($data) {
  *     echo $data;
@@ -269,7 +269,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
  * ```php
  * $promise = startDownloadStream($invalidUri);
  *
- * $stream = Stream\unwrapReadable($promise);
+ * $stream = React\Promise\Stream\unwrapReadable($promise);
  *
  * $stream->on('error', function (Exception $error) {
  *     echo 'Error: ' . $error->getMessage();
@@ -288,7 +288,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
  * ```php
  * $promise = startDownloadStream($uri);
  *
- * $stream = Stream\unwrapReadable($promise);
+ * $stream = React\Promise\Stream\unwrapReadable($promise);
  *
  * $loop->addTimer(2.0, function () use ($stream) {
  *     $stream->close();
@@ -316,7 +316,7 @@ function unwrapReadable(PromiseInterface $promise)
  * //$promise = someFunctionWhichResolvesWithAStream();
  * $promise = startUploadStream($uri);
  *
- * $stream = Stream\unwrapWritable($promise);
+ * $stream = React\Promise\Stream\unwrapWritable($promise);
  *
  * $stream->write('hello');
  * $stream->end('world');
@@ -333,7 +333,7 @@ function unwrapReadable(PromiseInterface $promise)
  * ```php
  * $promise = startUploadStream($invalidUri);
  *
- * $stream = Stream\unwrapWritable($promise);
+ * $stream = React\Promise\Stream\unwrapWritable($promise);
  *
  * $stream->on('error', function (Exception $error) {
  *     echo 'Error: ' . $error->getMessage();
@@ -352,7 +352,7 @@ function unwrapReadable(PromiseInterface $promise)
  * ```php
  * $promise = startUploadStream($uri);
  *
- * $stream = Stream\unwrapWritable($promise);
+ * $stream = React\Promise\Stream\unwrapWritable($promise);
  *
  * $loop->addTimer(2.0, function () use ($stream) {
  *     $stream->close();
