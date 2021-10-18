@@ -22,7 +22,7 @@ for [ReactPHP](https://reactphp.org/).
 This lightweight library consists only of a few simple functions.
 All functions reside under the `React\Promise\Stream` namespace.
 
-The below examples assume refer to them with their fully-qualified names like this:
+The below examples refer to all functions with their fully-qualified names like this:
 
 ```php
 React\Promise\Stream\buffer(…);
@@ -262,7 +262,7 @@ This project follows [SemVer](https://semver.org/).
 This will install the latest supported version:
 
 ```bash
-$ composer require react/promise-stream:^1.2
+$ composer require react/promise-stream:^1.3
 ```
 
 See also the [CHANGELOG](CHANGELOG.md) for details about version upgrades.
