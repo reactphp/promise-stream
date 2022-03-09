@@ -4,7 +4,6 @@ namespace React\Promise\Stream;
 
 use Evenement\EventEmitter;
 use InvalidArgumentException;
-use React\Promise\CancellablePromiseInterface;
 use React\Promise\PromiseInterface;
 use React\Stream\ReadableStreamInterface;
 use React\Stream\Util;
@@ -126,7 +125,7 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
         $this->closed = true;
 
         // try to cancel promise once the stream closes
-        if ($this->promise instanceof CancellablePromiseInterface) {
+        if ($this->promise !== null && \method_exists($this->promise, 'cancel')) {
             $this->promise->cancel();
         }
         $this->promise = null;
