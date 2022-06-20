@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.0 (2022-06-20)
+
+*   Feature: Forward compatibility with react/promise 3.
+    (#20 by @WyriHaximus)
+
+*   Improve test suite, test against PHP 8.1 and fix legacy HHVM build.
+    (#28, #29 and #30 by @SimonFrings)
+
 ## 1.3.0 (2021-10-18)
 
 *   Feature: Improve error reporting by appending previous exception messages.
