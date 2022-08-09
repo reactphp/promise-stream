@@ -2,26 +2,13 @@
 
 namespace React\Tests\Promise\Stream;
 
-use Clue\React\Block;
-use React\EventLoop\Factory;
 use React\Promise;
 use React\Promise\Deferred;
 use React\Promise\Stream;
-use React\Promise\Timer;
 use React\Stream\ThroughStream;
 
 class UnwrapWritableTest extends TestCase
 {
-    private $loop;
-
-    /**
-     * @before
-     */
-    public function setUpLoop()
-    {
-        $this->loop = Factory::create();
-    }
-
     public function testReturnsWritableStreamForPromise()
     {
         $promise = new \React\Promise\Promise(function () { });
@@ -45,14 +32,14 @@ class UnwrapWritableTest extends TestCase
 
     public function testClosingRejectingStreamMakesItNotWritable()
     {
-        $promise = Timer\reject(0.001, $this->loop);
-        $stream = Stream\unwrapWritable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $stream->on('close', $this->expectCallableOnce());
         $stream->on('error', $this->expectCallableNever());
 
         $stream->close();
-        $this->loop->run();
 
         $this->assertFalse($stream->isWritable());
     }
@@ -69,32 +56,32 @@ class UnwrapWritableTest extends TestCase
 
     public function testEmitsErrorWhenPromiseRejects()
     {
-        $promise = Timer\reject(0.001, $this->loop);
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapWritable($promise);
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $this->assertTrue($stream->isWritable());
 
         $stream->on('error', $this->expectCallableOnce());
         $stream->on('close', $this->expectCallableOnce());
 
-        $this->loop->run();
+        $deferred->reject(new \RuntimeException());
 
         $this->assertFalse($stream->isWritable());
     }
 
     public function testEmitsErrorWhenPromiseResolvesWithWrongValue()
     {
-        $promise = Timer\resolve(0.001, $this->loop);
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapWritable($promise);
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $this->assertTrue($stream->isWritable());
 
         $stream->on('error', $this->expectCallableOnce());
         $stream->on('close', $this->expectCallableOnce());
 
-        $this->loop->run();
+        $deferred->resolve(42);
 
         $this->assertFalse($stream->isWritable());
     }
@@ -125,17 +112,15 @@ class UnwrapWritableTest extends TestCase
         $input = new ThroughStream();
         $input->close();
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapWritable($promise);
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $this->assertTrue($stream->isWritable());
 
         $stream->on('close', $this->expectCallableOnce());
 
-        $this->loop->run();
+        $deferred->resolve($input);
 
         $this->assertFalse($stream->isWritable());
     }
@@ -162,14 +147,13 @@ class UnwrapWritableTest extends TestCase
         $input->expects($this->once())->method('write')->with($data);
         $input->expects($this->never())->method('end');
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
-        $stream = Stream\unwrapWritable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $stream->write($data);
 
-        $this->loop->run();
+        $deferred->resolve($input);
     }
 
     public function testForwardsDataInOriginalChunksOncePromiseResolves()
@@ -179,15 +163,14 @@ class UnwrapWritableTest extends TestCase
         $input->expects($this->exactly(2))->method('write')->withConsecutive(array('hello'), array('world'));
         $input->expects($this->never())->method('end');
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
-        $stream = Stream\unwrapWritable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $stream->write('hello');
         $stream->write('world');
 
-        $this->loop->run();
+        $deferred->resolve($input);
     }
 
     public function testForwardsDataAndEndImmediatelyIfPromiseIsAlreadyResolved()
@@ -211,16 +194,15 @@ class UnwrapWritableTest extends TestCase
         $input->expects($this->exactly(3))->method('write')->withConsecutive(array('hello'), array('world'), array('!'));
         $input->expects($this->once())->method('end');
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
-        $stream = Stream\unwrapWritable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $stream->write('hello');
         $stream->write('world');
         $stream->end('!');
 
-        $this->loop->run();
+        $deferred->resolve($input);
     }
 
     public function testForwardsNoDataWhenWritingAfterEndIfPromiseIsAlreadyResolved()
@@ -245,15 +227,14 @@ class UnwrapWritableTest extends TestCase
         $input->expects($this->never())->method('write');
         $input->expects($this->once())->method('end');
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
-        $stream = Stream\unwrapWritable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapWritable($deferred->promise());
 
         $stream->end();
         $stream->write('nope');
 
-        $this->loop->run();
+        $deferred->resolve($input);
     }
 
     public function testWriteReturnsFalseWhenPromiseIsPending()

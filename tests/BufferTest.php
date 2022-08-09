@@ -2,8 +2,6 @@
 
 namespace React\Tests\Promise\Stream;
 
-use Clue\React\Block;
-use React\EventLoop\Factory;
 use React\Promise\Stream;
 use React\Stream\ThroughStream;
 
@@ -92,37 +90,26 @@ class BufferTest extends TestCase
 
     public function testMaximumSize()
     {
-        $loop = Factory::create();
         $stream = new ThroughStream();
-
-        $loop->addTimer(0.1, function () use ($stream) {
-            $stream->write('12345678910111213141516');
-        });
 
         $promise = Stream\buffer($stream, 16);
 
-        if (method_exists($this, 'expectException')) {
-            $this->expectException('OverflowException');
-            $this->expectExceptionMessage('Buffer exceeded maximum length');
-        } else {
-            $this->setExpectedException('\OverflowException', 'Buffer exceeded maximum length');
-        }
-        Block\await($promise, $loop, 10);
+        $stream->write('12345678910111213141516');
+
+        $promise->then(null, $this->expectCallableOnceWith(new \OverflowException(
+            'Buffer exceeded maximum length'
+        )));
     }
 
     public function testUnderMaximumSize()
     {
-        $loop = Factory::create();
         $stream = new ThroughStream();
-
-        $loop->addTimer(0.1, function () use ($stream) {
-            $stream->write('1234567891011');
-            $stream->end();
-        });
 
         $promise = Stream\buffer($stream, 16);
 
-        $result = Block\await($promise, $loop, 10);
-        $this->assertSame('1234567891011', $result);
+        $stream->write('1234567891011');
+        $stream->end();
+
+        $promise->then($this->expectCallableOnceWith('1234567891011'));
     }
 }
