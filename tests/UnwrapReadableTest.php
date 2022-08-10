@@ -2,25 +2,13 @@
 
 namespace React\Tests\Promise\Stream;
 
-use Clue\React\Block;
-use React\EventLoop\Factory;
 use React\Promise;
+use React\Promise\Deferred;
 use React\Promise\Stream;
-use React\Promise\Timer;
 use React\Stream\ThroughStream;
 
 class UnwrapReadableTest extends TestCase
 {
-    private $loop;
-
-    /**
-     * @before
-     */
-    public function setUpLoop()
-    {
-        $this->loop = Factory::create();
-    }
-
     public function testReturnsReadableStreamForPromise()
     {
         $promise = new \React\Promise\Promise(function () { });
@@ -45,15 +33,15 @@ class UnwrapReadableTest extends TestCase
 
     public function testClosingRejectingStreamMakesItNotReadable()
     {
-        $promise = Timer\reject(0.001, $this->loop);
-        $stream = Stream\unwrapReadable($promise);
+        $deferred = new Deferred();
+
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $stream->on('close', $this->expectCallableOnce());
         $stream->on('end', $this->expectCallableNever());
         $stream->on('error', $this->expectCallableNever());
 
         $stream->close();
-        $this->loop->run();
 
         $this->assertFalse($stream->isReadable());
     }
@@ -70,32 +58,32 @@ class UnwrapReadableTest extends TestCase
 
     public function testEmitsErrorWhenPromiseRejects()
     {
-        $promise = Timer\reject(0.001, $this->loop);
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapReadable($promise);
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $this->assertTrue($stream->isReadable());
 
         $stream->on('error', $this->expectCallableOnce());
         $stream->on('end', $this->expectCallableNever());
 
-        $this->loop->run();
+        $deferred->reject(new \RuntimeException());
 
         $this->assertFalse($stream->isReadable());
     }
 
     public function testEmitsErrorWhenPromiseResolvesWithWrongValue()
     {
-        $promise = Timer\resolve(0.001, $this->loop);
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapReadable($promise);
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $this->assertTrue($stream->isReadable());
 
         $stream->on('error', $this->expectCallableOnce());
         $stream->on('end', $this->expectCallableNever());
 
-        $this->loop->run();
+        $deferred->resolve(42);
 
         $this->assertFalse($stream->isReadable());
     }
@@ -126,17 +114,15 @@ class UnwrapReadableTest extends TestCase
         $input = new ThroughStream();
         $input->close();
 
-        $promise = Timer\resolve(0.001, $this->loop)->then(function () use ($input) {
-            return $input;
-        });
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapReadable($promise);
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $this->assertTrue($stream->isReadable());
 
         $stream->on('close', $this->expectCallableOnce());
 
-        $this->loop->run();
+        $deferred->resolve($input);
 
         $this->assertFalse($stream->isReadable());
     }
@@ -284,20 +270,15 @@ class UnwrapReadableTest extends TestCase
     {
         $input = new ThroughStream();
 
-        $loop = $this->loop;
-        $promise = new Promise\Promise(function ($resolve) use ($loop, $input) {
-            $loop->addTimer(0.001, function () use ($resolve, $input) {
-                $resolve($input);
-            });
-        });
+        $deferred = new Deferred();
 
-        $stream = Stream\unwrapReadable($promise);
+        $stream = Stream\unwrapReadable($deferred->promise());
 
         $stream->on('close', $this->expectCallableOnce());
 
         $stream->close();
 
-        Block\await($promise, $this->loop);
+        $deferred->resolve($input);
 
         $this->assertFalse($input->isReadable());
     }
