@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 (2022-09-09)
+
+*   Feature: Full support for PHP 8.2 release.
+    (#33 by @WyriHaximus)
+
+*   Improve test suite and minor documentation improvements.
+    (#32 by @clue and #31 by @nhedger)
+
 ## 1.4.0 (2022-06-20)
 
 *   Feature: Forward compatibility with react/promise 3.
