@@ -21,7 +21,7 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
     /**
      * Instantiate new unwrapped readable stream for given `Promise` which resolves with a `ReadableStreamInterface`.
      *
-     * @param PromiseInterface $promise Promise<ReadableStreamInterface, Exception>
+     * @param PromiseInterface<ReadableStreamInterface> $promise
      */
     public function __construct(PromiseInterface $promise)
     {

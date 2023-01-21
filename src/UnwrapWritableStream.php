@@ -22,7 +22,7 @@ class UnwrapWritableStream extends EventEmitter implements WritableStreamInterfa
     /**
      * Instantiate new unwrapped writable stream for given `Promise` which resolves with a `WritableStreamInterface`.
      *
-     * @param PromiseInterface $promise Promise<WritableStreamInterface, Exception>
+     * @param PromiseInterface<WritableStreamInterface> $promise
      */
     public function __construct(PromiseInterface $promise)
     {
