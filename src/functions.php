@@ -45,7 +45,7 @@ use React\Stream\WritableStreamInterface;
  *
  * @param ReadableStreamInterface<string> $stream
  * @param ?int                            $maxLength Maximum number of bytes to buffer or null for unlimited.
- * @return PromiseInterface<string,\RuntimeException>
+ * @return PromiseInterface<string>
  */
 function buffer(ReadableStreamInterface $stream, $maxLength = null)
 {
@@ -121,7 +121,7 @@ function buffer(ReadableStreamInterface $stream, $maxLength = null)
  *
  * @param ReadableStreamInterface|WritableStreamInterface $stream
  * @param string                                          $event
- * @return PromiseInterface<mixed,\RuntimeException>
+ * @return PromiseInterface<mixed>
  */
 function first(EventEmitterInterface $stream, $event = 'data')
 {
@@ -192,7 +192,7 @@ function first(EventEmitterInterface $stream, $event = 'data')
  *
  * @param ReadableStreamInterface|WritableStreamInterface $stream
  * @param string                                          $event
- * @return PromiseInterface<array,\RuntimeException>
+ * @return PromiseInterface<array>
  */
 function all(EventEmitterInterface $stream, $event = 'data')
 {
@@ -296,7 +296,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
  * });
  * ```
  *
- * @param PromiseInterface<ReadableStreamInterface<T>,\Exception> $promise
+ * @param PromiseInterface<ReadableStreamInterface<T>> $promise
  * @return ReadableStreamInterface<T>
  */
 function unwrapReadable(PromiseInterface $promise)
@@ -361,7 +361,7 @@ function unwrapReadable(PromiseInterface $promise)
  * });
  * ```
  *
- * @param PromiseInterface<WritableStreamInterface<T>,\Exception> $promise
+ * @param PromiseInterface<WritableStreamInterface<T>> $promise
  * @return WritableStreamInterface<T>
  */
 function unwrapWritable(PromiseInterface $promise)

@@ -47,7 +47,7 @@ Stream\buffer(…);
 
 ### buffer()
 
-The `buffer(ReadableStreamInterface<string> $stream, ?int $maxLength = null): PromiseInterface<string,RuntimeException>` function can be used to
+The `buffer(ReadableStreamInterface<string> $stream, ?int $maxLength = null): PromiseInterface<string>` function can be used to
 create a `Promise` which will be fulfilled with the stream data buffer.
 
 ```php
@@ -84,7 +84,7 @@ React\Promise\Stream\buffer($stream, 1024)->then(function ($contents) {
 
 ### first()
 
-The `first(ReadableStreamInterface|WritableStreamInterface $stream, string $event = 'data'): PromiseInterface<mixed,RuntimeException>` function can be used to
+The `first(ReadableStreamInterface|WritableStreamInterface $stream, string $event = 'data'): PromiseInterface<mixed>` function can be used to
 create a `Promise` which will be fulfilled once the given event triggers for the first time.
 
 ```php
@@ -114,7 +114,7 @@ The promise will be rejected with a `RuntimeException` if it is cancelled.
 
 ### all()
 
-The `all(ReadableStreamInterface|WritableStreamInterface $stream, string $event = 'data'): PromiseInterface<array,RuntimeException>` function can be used to
+The `all(ReadableStreamInterface|WritableStreamInterface $stream, string $event = 'data'): PromiseInterface<array>` function can be used to
 create a `Promise` which will be fulfilled with an array of all the event data.
 
 ```php
@@ -140,7 +140,7 @@ The promise will be rejected with a `RuntimeException` if it is cancelled.
 
 ### unwrapReadable()
 
-The `unwrapReadable(PromiseInterface<ReadableStreamInterface<T>,Exception> $promise): ReadableStreamInterface<T>` function can be used to
+The `unwrapReadable(PromiseInterface<ReadableStreamInterface<T>> $promise): ReadableStreamInterface<T>` function can be used to
 unwrap a `Promise` which will be fulfilled with a `ReadableStreamInterface<T>`.
 
 This function returns a readable stream instance (implementing `ReadableStreamInterface<T>`)
@@ -197,7 +197,7 @@ $loop->addTimer(2.0, function () use ($stream) {
 
 ### unwrapWritable()
 
-The `unwrapWritable(PromiseInterface<WritableStreamInterface<T>,Exception> $promise): WritableStreamInterface<T>` function can be used to
+The `unwrapWritable(PromiseInterface<WritableStreamInterface<T>> $promise): WritableStreamInterface<T>` function can be used to
 unwrap a `Promise` which will be fulfilled with a `WritableStreamInterface<T>`.
 
 This function returns a writable stream instance (implementing `WritableStreamInterface<T>`)
