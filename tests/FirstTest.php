@@ -112,4 +112,43 @@ class FirstTest extends TestCase
 
         $this->expectPromiseReject($promise);
     }
+
+    public function testNoGarbageCollectionCyclesAfterClosingStream()
+    {
+        \gc_collect_cycles();
+        $stream = new ThroughStream();
+        $promise = Stream\first($stream);
+
+        $stream->close();
+
+        $this->assertSame(0, \gc_collect_cycles());
+    }
+
+    public function testShouldResolveWithoutCreatingGarbageCyclesAfterDataThenClose()
+    {
+        \gc_collect_cycles();
+
+        $stream = new ThroughStream();
+
+        $promise = Stream\first($stream);
+
+        $stream->emit('data', array('hello', $stream));
+        $stream->close();
+
+        $this->expectPromiseResolve($promise);
+        $this->assertSame(0, \gc_collect_cycles());
+    }
+
+    public function testCancelPendingStreamWillRejectWithoutCreatingGarbageCycles()
+    {
+        \gc_collect_cycles();
+        $stream = new ThroughStream();
+
+        $promise = Stream\first($stream);
+
+        $promise->cancel();
+
+        $this->expectPromiseReject($promise);
+        $this->assertSame(0, \gc_collect_cycles());
+    }
 }
