@@ -141,6 +141,7 @@ function first(EventEmitterInterface $stream, $event = 'data')
     return new Promise\Promise(function ($resolve, $reject) use ($stream, $event, &$listener) {
         $listener = function ($data = null) use ($stream, $event, &$listener, $resolve) {
             $stream->removeListener($event, $listener);
+            $listener = null;
             $resolve($data);
         };
         $stream->on($event, $listener);
@@ -156,8 +157,11 @@ function first(EventEmitterInterface $stream, $event = 'data')
             });
         }
 
-        $stream->on('close', function () use ($stream, $event, $listener, $reject) {
-            $stream->removeListener($event, $listener);
+        $stream->on('close', function () use ($stream, $event, &$listener, $reject) {
+            if ($listener !== null) {
+                $stream->removeListener($event, $listener);
+                $listener = null;
+            }
             $reject(new \RuntimeException('Stream closed'));
         });
     }, function ($_, $reject) use ($stream, $event, &$listener) {
