@@ -6,6 +6,7 @@ use Evenement\EventEmitter;
 use InvalidArgumentException;
 use React\Promise\PromiseInterface;
 use React\Stream\ReadableStreamInterface;
+use React\Stream\ThroughStream;
 use React\Stream\Util;
 use React\Stream\WritableStreamInterface;
 
@@ -75,13 +76,17 @@ class UnwrapReadableStream extends EventEmitter implements ReadableStreamInterfa
                 return $stream;
             },
             function ($e) use ($out, &$closed) {
+                // Forward exception as error event if not already closed
                 if (!$closed) {
                     $out->emit('error', array($e, $out));
                     $out->close();
                 }
 
-                // resume() and pause() may attach to this promise, so ensure we actually reject here
-                throw $e;
+                // Both resume() and pause() may attach to this promise, so
+                // return a NOOP stream instance here.
+                $stream = new ThroughStream();
+                $stream->close();
+                return $stream;
             }
         );
     }
