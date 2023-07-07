@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.0 (2023-07-07)
+
+*   Feature: Update unwrapped stream to avoid unhandled promise rejections.
+    (#37 by @clue)
+
+*   Feature: Improve `first()` promise resolution to clean up any garbage references.
+    (#36 by @lucasnetau)
+
+*   Improve test suite and project setup and report failed assertions.
+    (#34 by @clue and #35 by @WyriHaximus)
+
 ## 1.5.0 (2022-09-09)
 
 *   Feature: Full support for PHP 8.2 release.
