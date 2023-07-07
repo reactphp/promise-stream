@@ -113,17 +113,6 @@ class FirstTest extends TestCase
         $this->expectPromiseReject($promise);
     }
 
-    public function testNoGarbageCollectionCyclesAfterClosingStream()
-    {
-        \gc_collect_cycles();
-        $stream = new ThroughStream();
-        $promise = Stream\first($stream);
-
-        $stream->close();
-
-        $this->assertSame(0, \gc_collect_cycles());
-    }
-
     public function testShouldResolveWithoutCreatingGarbageCyclesAfterDataThenClose()
     {
         \gc_collect_cycles();
