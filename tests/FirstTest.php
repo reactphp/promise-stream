@@ -115,7 +115,9 @@ class FirstTest extends TestCase
 
     public function testShouldResolveWithoutCreatingGarbageCyclesAfterDataThenClose()
     {
-        \gc_collect_cycles();
+        while (gc_collect_cycles()) {
+            // collect all garbage cycles
+        }
 
         $stream = new ThroughStream();
 
@@ -130,7 +132,10 @@ class FirstTest extends TestCase
 
     public function testCancelPendingStreamWillRejectWithoutCreatingGarbageCycles()
     {
-        \gc_collect_cycles();
+        while (gc_collect_cycles()) {
+            // collect all garbage cycles
+        }
+
         $stream = new ThroughStream();
 
         $promise = Stream\first($stream);
