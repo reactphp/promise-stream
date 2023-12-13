@@ -32,11 +32,11 @@
         "react/promise": "^3 || ^2.1 || ^1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5 || ^5.7 || ^4.8.35"
+        "phpunit/phpunit": "^9.6 || ^5.7 || ^4.8.36"
     },
     "autoload": {
         "psr-4": {
-            "React\\Promise\\Stream\\" : "src/"
+            "React\\Promise\\Stream\\": "src/"
         },
         "files": [
             "src/functions_include.php"
