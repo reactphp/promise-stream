@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.0 (2023-12-13)
+
+*   Feature: Full PHP 8.3 compatibility.
+    (#39 by @clue)
+
+*   Update test suite and collect all garbage cycles.
+    (#38 and #39 by @clue)
+
 ## 1.6.0 (2023-07-07)
 
 *   Feature: Update unwrapped stream to avoid unhandled promise rejections.
