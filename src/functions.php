@@ -295,7 +295,7 @@ function all(EventEmitterInterface $stream, $event = 'data')
  *
  * $stream = React\Promise\Stream\unwrapReadable($promise);
  *
- * $loop->addTimer(2.0, function () use ($stream) {
+ * Loop::get()->addTimer(2.0, function () use ($stream) {
  *     $stream->close();
  * });
  * ```
@@ -360,7 +360,7 @@ function unwrapReadable(PromiseInterface $promise)
  *
  * $stream = React\Promise\Stream\unwrapWritable($promise);
  *
- * $loop->addTimer(2.0, function () use ($stream) {
+ * Loop::get()->addTimer(2.0, function () use ($stream) {
  *     $stream->close();
  * });
  * ```
