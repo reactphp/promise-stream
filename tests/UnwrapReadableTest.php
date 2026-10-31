@@ -321,7 +321,9 @@ class UnwrapReadableTest extends TestCase
         $stream->close();
 
         $ref = new \ReflectionProperty($stream, 'promise');
-        $ref->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $ref->setAccessible(true);
+        }
         $value = $ref->getValue($stream);
 
         $this->assertNull($value);
